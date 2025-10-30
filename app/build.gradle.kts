@@ -55,9 +55,19 @@ dependencies {
     implementation(libs.androidx.compose.material3)
 
 
-    implementation("com.google.dagger:hilt-android:2.54")
-    kapt("com.google.dagger:hilt-android-compiler:2.54")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.moshi)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+
+
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
 
 
     testImplementation(libs.junit)
