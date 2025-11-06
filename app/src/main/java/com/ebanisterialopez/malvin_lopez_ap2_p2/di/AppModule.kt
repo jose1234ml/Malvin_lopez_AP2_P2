@@ -1,5 +1,9 @@
 package com.ebanisterialopez.malvin_lopez_ap2_p2.di
 
+import com.ebanisterialopez.malvin_lopez_ap2_p2.data.remote.api.GastoApi
+import com.ebanisterialopez.malvin_lopez_ap2_p2.data.repository.GastoRepositoryImpl
+import com.ebanisterialopez.malvin_lopez_ap2_p2.domain.repository.GastoRepository
+import com.ebanisterialopez.malvin_lopez_ap2_p2.domain.usecase.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -16,6 +20,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    private const val BASE_URL = "https://gestionhuacalesapi.azurewebsites.net/api/"
+
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
@@ -26,6 +32,7 @@ object AppModule {
             .addInterceptor(logging)
             .build()
     }
+
     @Provides
     @Singleton
     fun provideMoshi(): Moshi =
@@ -37,8 +44,31 @@ object AppModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit =
         Retrofit.Builder()
-            .baseUrl("")
+            .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
+
+    @Provides
+    @Singleton
+    fun provideGastoApi(retrofit: Retrofit): GastoApi =
+        retrofit.create(GastoApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideGastoRepository(api: GastoApi): GastoRepository =
+        GastoRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideGetGastosUseCase(repository: GastoRepository) = GetGastoUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideCreateGastoUseCase(repository: GastoRepository) = CreateGastoUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideUpdateGastoUseCase(repository: GastoRepository) = UpdateGastoUseCase(repository)
+
 }
